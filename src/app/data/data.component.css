@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .left-panel {
+    width: 48%;
+    overflow-y: auto; /* Allow scrolling for the left panel */
+    height: 100vh; /* Full viewport height */
+  }
+  
+  .right-panel {
+    width: 48%;
+    position: sticky; /* Make the right panel sticky */
+    top: 0; /* Stick to the top when scrolling */
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* Allow scrolling within the right panel */
+  }
+  
+  table {
+    width: 100%;
+  }
+  

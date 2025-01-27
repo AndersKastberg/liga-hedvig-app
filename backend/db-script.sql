@@ -1,0 +1,31 @@
+CREATE DATABASE ligahedvig;
+use ligahedvig;
+CREATE TABLE prices_2025 (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(255) NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    Url VARCHAR(255),
+    Team VARCHAR(255));
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE teams (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  user_id INT,
+  year INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE teamriders (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  team_id INT,
+  FOREIGN KEY (team_id) REFERENCES teams(id)
+);
+
