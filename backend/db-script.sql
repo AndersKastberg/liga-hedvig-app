@@ -23,9 +23,9 @@ CREATE TABLE teams (
 
 CREATE TABLE teamriders (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  price DECIMAL(10, 2) NOT NULL,
+  rider_id INT,
   team_id INT,
+  FOREIGN KEY (rider_id) REFERENCES prices_2025(ID),    
   FOREIGN KEY (team_id) REFERENCES teams(id)
 );
 

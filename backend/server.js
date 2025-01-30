@@ -31,6 +31,12 @@ app.get('/data', (req, res) => {
     });
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'An internal server error occurred.', error: err.message });
+  });
+
 app.listen(3000, () => {
     console.log('Server started on port 3000');
 });

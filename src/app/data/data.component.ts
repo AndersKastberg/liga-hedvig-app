@@ -23,22 +23,24 @@ export class DataComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
   totalSelectedPrice = 0;
   selectionCount = 0;
-  userId = 1;
-  teams!: any[];
+  userId = 1; 
+  teams: any[] = []; // Store user's teams
+  selectedTeam: any; // Store selected team
   constructor(private dataService: DataService,
      private cdr: ChangeDetectorRef,
      ) { }
 
   ngOnInit() {
     this.dataService.getData().subscribe(
-      (data) => {
-        // console.debug('Data received from backend:', data);
+      (data) => {       
         this.dataSource.data = data;
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
+    this.viewTeams(); // Fetch teams when the component loads
+    console.debug('Teams', this.teams);
   }
 
   isAllSelected() {
@@ -97,16 +99,16 @@ export class DataComponent implements OnInit {
 
   addTeam() {
     const teamName = prompt("Enter team name:");
-    const year = prompt("Enter the year:");
+    const year =2025;
     if (teamName && year) {
-      this.saveTeam(teamName, Number(year));
+      this.saveTeam(teamName);
     }
   }
-
-  saveTeam(teamName: string, year: number) {
-    
-    if (teamName && year) {
-      this.dataService.saveTeam(this.userId, teamName, Number(year), this.selection.selected).subscribe(response => {
+  
+  saveTeam(teamName: string) {
+       
+    if (teamName) {
+      this.dataService.saveTeam(this.userId, teamName, 2025, this.selection.selected).subscribe(response => {
         alert("Team saved successfully!");
       }, error => {
         alert("Error saving team: " + error.message);
@@ -120,6 +122,10 @@ export class DataComponent implements OnInit {
     }, error => {
       alert("Error fetching teams: " + error.message);
     });
+  }
+
+  onTeamChange(teamId: string) {
+    this.selectedTeam = this.teams.find(team => team.id === parseInt(teamId, 10));
   }
 
   editTeam(team: any) {

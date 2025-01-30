@@ -15,14 +15,17 @@ export class DataService {
   }
 
   saveTeam(userId: number, teamName: string, year: number, riders: any[]): Observable<any> {
-    return this.http.post(`${this.teamUrl}/save`, { userId, teamName, year, riders });
+    const riderIds = riders.map(rider => ({ id: rider.ID }));
+    console.debug('Selected riders:', riders);
+    return this.http.post(`${this.teamUrl}/save`, { userId, teamName, year, riders: riderIds });
   }
-
   getTeams(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.teamUrl}/${userId}`);
   }
 
   editTeam(teamId: string, teamName: string, year: number, riders: any[]): Observable<any> {
-    return this.http.put(`${this.teamUrl}/${teamId}`, { teamName, year, riders });
+    const riderIds = riders.map(rider => ({ id: rider.ID }));
+    return this.http.put(`${this.teamUrl}/${teamId}`, { teamName, year, riders: riderIds });
   }
+  
 }

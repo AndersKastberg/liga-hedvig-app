@@ -2,44 +2,96 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../db');
 
-// Save a new team
+// Save or update a team with riders
 router.post('/save', (req, res) => {
   const { userId, teamName, year, riders } = req.body;
 
-  connection.query('SELECT COUNT(*) AS teamCount FROM teams WHERE user_id = ?', [userId], (error, results) => {
-    if (error) return res.status(500).json({ error: error.message });
-    if (results[0].teamCount >= 5) return res.status(400).json({ message: 'Maximum 5 teams allowed per user.' });
+  // Check if the team already exists
+  const checkTeamQuery = 'SELECT id FROM teams WHERE user_id = ? AND name = ?';
+  connection.query(checkTeamQuery, [userId, teamName], (error, results) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
 
-    const teamQuery = 'INSERT INTO teams (name, year, user_id) VALUES (?, ?, ?)';
-    connection.query(teamQuery, [teamName, year, userId], (error, results) => {
-      if (error) return res.status(500).json({ error: error.message });
+    if (results.length > 0) {
+      // Team exists, update riders
+      const teamId = results[0].id;
 
-      const teamId = results.insertId;
-      const riderQueries = riders.map(rider => {
-        return new Promise((resolve, reject) => {
-          const riderQuery = 'INSERT INTO teamriders (name, price, team_id) VALUES (?, ?, ?)';
-          connection.query(riderQuery, [rider.name, rider.price, teamId], (error) => {
-            if (error) reject(error);
-            resolve();
+      // Delete existing riders
+      const deleteRidersQuery = 'DELETE FROM teamriders WHERE team_id = ?';
+      connection.query(deleteRidersQuery, [teamId], (error) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).json({ message: 'Internal server error', error: error.message });
+        }
+
+        // Insert new riders
+        const riderQueries = riders.map(rider => {
+          return new Promise((resolve, reject) => {
+            console.debug(`Inserting rider with ID: ${rider.id} into team ${teamId}`);
+            const insertRiderQuery = 'INSERT INTO teamriders (team_id, rider_id) VALUES (?, ?)';
+            connection.query(insertRiderQuery, [teamId, rider.id], (error) => { // Use "ID" here
+              if (error) {
+                console.error(error);
+                return reject(error);
+              }
+              resolve();
+            });
           });
         });
-      });
 
-      Promise.all(riderQueries)
-        .then(() => res.status(201).json({ message: 'Team saved successfully!' }))
-        .catch(error => res.status(500).json({ error: error.message }));
-    });
+        Promise.all(riderQueries)
+          .then(() => res.status(200).json({ message: 'Team updated successfully!' }))
+          .catch(error => {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error', error: error.message });
+          });
+      });
+    } else {
+      // Team does not exist, create a new team
+      const teamQuery = 'INSERT INTO teams (name, year, user_id) VALUES (?, ?, ?)';
+      connection.query(teamQuery, [teamName, year, userId], (error, results) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).json({ message: 'Internal server error', error: error.message });
+        }
+
+        const teamId = results.insertId;
+        const riderQueries = riders.map(rider => {
+          return new Promise((resolve, reject) => {
+            const riderQuery = 'INSERT INTO teamriders (team_id, rider_id) VALUES (?, ?)';
+            connection.query(riderQuery, [teamId, rider.ID], (error) => { // Use "ID" here
+              if (error) {
+                console.error(error);
+                return reject(error);
+              }
+              resolve();
+            });
+          });
+        });
+
+        Promise.all(riderQueries)
+          .then(() => res.status(201).json({ message: 'Team saved successfully!' }))
+          .catch(error => {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error', error: error.message });
+          });
+      });
+    }
   });
 });
+
 
 // Fetch teams for a user
 router.get('/:userId', (req, res) => {
   const { userId } = req.params;
   
   const teamQuery = `
-    SELECT t.id AS teamId, t.name AS teamName, t.year, r.id AS riderId, r.name AS riderName, r.price AS riderPrice
+    SELECT t.id AS teamId, t.name AS teamName, t.year, r.ID AS riderId, r.Name AS riderName, r.Price AS riderPrice
     FROM teams t
-    LEFT JOIN teamriders r ON t.id = r.team_id
+    LEFT OUTER JOIN teamriders tr ON t.id = tr.team_id
+    LEFT OUTER JOIN prices_2025 r ON tr.rider_id = r.ID
     WHERE t.user_id = ?
   `;
   
