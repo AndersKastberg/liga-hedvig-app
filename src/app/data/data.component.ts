@@ -23,7 +23,7 @@ export class DataComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
   totalSelectedPrice = 0;
   selectionCount = 0;
-  userId = 1; 
+  userId = 0; 
   teams: any[] = []; // Store user's teams
   selectedTeam: any; // Store selected team
   constructor(private dataService: DataService,
@@ -31,18 +31,25 @@ export class DataComponent implements OnInit {
      ) { }
 
   ngOnInit() {
-    this.dataService.getData().subscribe(
-      (data) => {       
-        this.dataSource.data = data;
-      },
-      (error) => {
-        console.error('Error fetching data:', error);
-      }
-    );
-    this.viewTeams(); // Fetch teams when the component loads
+      // Simulate fetching user ID from a service or auth context
+      this.getUserId().then(userId => {
+        this.userId = userId;
+        this.dataService.getData().subscribe(data => {
+          this.dataSource.data = data;
+        });
+        this.viewTeams(); // Fetch teams when the component loads
+      });
     console.debug('Teams', this.teams);
   }
 
+  getUserId(): Promise<number> {
+    // Simulate an asynchronous operation to fetch user ID
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(1); // Replace with actual logic to fetch user ID
+      }, 100);
+    });
+  }
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
@@ -124,10 +131,11 @@ export class DataComponent implements OnInit {
     });
   }
 
-  onTeamChange(teamId: string) {
+  onTeamChange(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const teamId = selectElement.value;
     this.selectedTeam = this.teams.find(team => team.id === parseInt(teamId, 10));
   }
-
   editTeam(team: any) {
     const newTeamName = prompt("Enter new team name:", team.name);
     const newYear = prompt("Enter new year:", team.year);

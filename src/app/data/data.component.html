@@ -58,13 +58,17 @@
     <button (click)="viewTeams()">View Teams
     </button>
   
-
-
-  <div *ngIf="teams">
-    <h2>Dine hold</h2>
-    <div *ngFor="let team of teams">
-      <h3>{{ team.name }} </h3>
-      <button (click)="editTeam(team)">Edit</button>
+    <div class="teams-section">
+      <h2>Your Teams</h2>
+      <select (change)="onTeamChange($event)">
+        <option *ngFor="let team of teams" [value]="team.id">{{ team.name }} </option>
+      </select>
+      <div *ngIf="selectedTeam">
+        <h3>{{ selectedTeam.name }}</h3>
+        <ul>
+          <li *ngFor="let rider of selectedTeam.riders">{{ rider.name }} - {{ rider.price | currency:'DKK':'symbol':'1.0-0' }}</li>
+        </ul>
+        <button (click)="editTeam(selectedTeam)">Edit Team</button>
+      </div>
     </div>
-  </div>
 </div>
