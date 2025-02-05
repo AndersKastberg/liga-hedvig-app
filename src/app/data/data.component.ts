@@ -62,10 +62,10 @@ export class DataComponent implements OnInit {
   }
 
   selectAllRows() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
-    this.updateSelectedDataSource();
+    // this.isAllSelected() ?
+    //   this.selection.clear() :
+    //   this.dataSource.data.forEach(row => this.selection.select(row));
+    // this.updateSelectedDataSource();
   }
 
   toggleRowSelection(row: any) {

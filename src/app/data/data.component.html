@@ -30,7 +30,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+    
+    
   </div>
+
   <div class="right-panel">
     <h2>Valgte ryttere</h2>
     <table mat-table [dataSource]="selectedDataSource" class="mat-elevation-z8">
@@ -39,36 +42,36 @@
         <th mat-header-cell *matHeaderCellDef> Name </th>
         <td mat-cell *matCellDef="let element"> {{element.Name}} </td>
       </ng-container>
-  
+
       <!-- Price Column -->
       <ng-container matColumnDef="price">
         <th mat-header-cell *matHeaderCellDef> Price </th>
         <td mat-cell *matCellDef="let element"> {{element.Price | currency:'DKK':'symbol':'1.0-0'}} </td>
       </ng-container>
-  
+
       <!-- Table Header and Rows -->
       <tr mat-header-row *matHeaderRowDef="selectedDisplayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: selectedDisplayedColumns;"></tr>
     </table>
     <h3>Valgte ryttere: {{ selectionCount }} / 24</h3>
     <h3>Total Price: {{ totalSelectedPrice | currency:'DKK':'symbol':'1.0-0' }}</h3>
+    <button (click)="addTeam()">Tilføj Team</button>
+    <button (click)="saveTeam('A1')">Gem Team</button>
+    <button (click)="viewTeams()">Se Teams</button>
+  </div>
 
-    <button (click)="addTeam()">Add Team</button>
-    <button (click)="saveTeam('A1')">Save Team</button>
-    <button (click)="viewTeams()">View Teams
-    </button>
-  
-    <div class="teams-section">
-      <h2>Your Teams</h2>
-      <select (change)="onTeamChange($event)">
-        <option *ngFor="let team of teams" [value]="team.id">{{ team.name }} </option>
-      </select>
-      <div *ngIf="selectedTeam">
-        <h3>{{ selectedTeam.name }}</h3>
-        <ul>
-          <li *ngFor="let rider of selectedTeam.riders">{{ rider.name }} - {{ rider.price | currency:'DKK':'symbol':'1.0-0' }}</li>
-        </ul>
-        <button (click)="editTeam(selectedTeam)">Edit Team</button>
-      </div>
+  <!-- Section for Viewing and Editing Teams -->
+  <div class="teams-section">
+    <h2>Dine Teams</h2>
+    <select (change)="onTeamChange($event)">
+      <option *ngFor="let team of teams" [value]="team.id">{{ team.name }}</option>
+    </select>
+    <div *ngIf="selectedTeam">
+      <h3>{{ selectedTeam.name }}</h3>
+      <ul>
+        <li *ngFor="let rider of selectedTeam.riders">{{ rider.name }} - {{ rider.price | currency:'DKK':'symbol':'1.0-0' }}</li>
+      </ul>
+      <button (click)="editTeam(selectedTeam)">Rediger Team</button>
     </div>
+  </div>
 </div>
