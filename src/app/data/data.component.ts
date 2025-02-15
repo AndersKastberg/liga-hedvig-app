@@ -5,6 +5,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 
@@ -13,7 +15,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
   templateUrl: './data.component.html',
   styleUrls: ['./data.component.css'],
   standalone: true,
-  imports: [MatTableModule, CommonModule, RouterModule, MatCheckboxModule]
+  imports: [MatTableModule, CommonModule, RouterModule, MatCheckboxModule, MatFormFieldModule, MatInputModule]
 })
 export class DataComponent implements OnInit {
   displayedColumns: string[] = ['select', 'name', 'price'];
@@ -82,6 +84,7 @@ export class DataComponent implements OnInit {
     this.selectedDataSource.data = this.selection.selected;
     this.selectionCount = this.selection.selected.length; // Update selection count
     console.debug('updateSelectedDataSource()', this.selection.selected);
+    this.sortSelectedData(); // Sort selected data by price descending
     this.calculateTotalPrice();
     this.cdr.detectChanges();
   }
@@ -90,6 +93,11 @@ export class DataComponent implements OnInit {
       const price = Number(record.Price); // Ensure price is a number
       return total + (isNaN(price) ? 0 : price);
     }, 0);
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   addTeam() {
@@ -126,7 +134,7 @@ export class DataComponent implements OnInit {
     this.selectedTeam = this.teams.find(team => team.id === teamId);
     this.selectedDataSource.data = this.selectedTeam?.riders || [];
     this.updateSelection(); // Update selection to check selected riders in the left panel
-
+    this.sortSelectedData();
     this.calculateTotalPrice(); // Recalculate total price based on selected team
   }
 
@@ -142,6 +150,9 @@ export class DataComponent implements OnInit {
     this.updateSelectedDataSource(); // Update the selected data source
   }
 
+  sortSelectedData() {
+    this.selectedDataSource.data = this.selectedDataSource.data.sort((a, b) => b.Price - a.Price);
+  }
 
   onTeamChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;

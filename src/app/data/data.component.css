@@ -16,6 +16,12 @@
     height: 100vh; /* Full viewport height */
     overflow-y: auto; /* Allow scrolling within the right panel */
   }
+  .mat-form-field-label {
+    font-size: 1.2em; /* Increase font size */
+    color: black; /* Change color to black or any other color for better visibility */
+    font-weight: bold; /* Make the label bold */
+  }
+  
   
   table {
     width: 100%;

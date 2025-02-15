@@ -48,4 +48,4 @@ const insertData = (data) => {
 };
 
 // Run the delete function followed by the import function
-deleteAllData(() => importCsvData('G:\\My Drive\\Cycling\\Manager2025\\Prices.csv'));
+deleteAllData(() => importCsvData('G:\\My Drive\\Cycling\\Manager2025\\Liga Hedvig 2025 - Prices.csv'));
