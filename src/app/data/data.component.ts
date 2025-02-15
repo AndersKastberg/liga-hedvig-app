@@ -26,6 +26,7 @@ export class DataComponent implements OnInit {
   userId = 0; 
   teams: any[] = []; // Store user's teams
   selectedTeam: any; // Store selected team
+  toastr: any;
   constructor(private dataService: DataService,
      private cdr: ChangeDetectorRef,
      ) { }
@@ -50,23 +51,13 @@ export class DataComponent implements OnInit {
       }, 100);
     });
   }
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
+  
   isAnySelected() {
     const numSelected = this.selection.selected.length;
     return numSelected > 0 && numSelected < this.dataSource.data.length;
   }
 
-  selectAllRows() {
-    // this.isAllSelected() ?
-    //   this.selection.clear() :
-    //   this.dataSource.data.forEach(row => this.selection.select(row));
-    // this.updateSelectedDataSource();
-  }
+  
 
   toggleRowSelection(row: any) {
     if (!this.selection.isSelected(row) && this.selection.selected.length >= 24) {
@@ -108,34 +99,45 @@ export class DataComponent implements OnInit {
     const teamName = prompt("Enter team name:");
     const year =2025;
     if (teamName && year) {
-      this.saveTeam(teamName);
+      this.saveTeam(teamName, year);
     }
   }
   
-  saveTeam(teamName: string) {
+  saveTeam(teamName: string,year:number) {
        
     if (teamName) {
-      this.dataService.saveTeam(this.userId, teamName, 2025, this.selection.selected).subscribe(response => {
+      this.dataService.saveTeam(this.userId, teamName, year, this.selection.selected).subscribe(response => {
         alert("Team saved successfully!");
       }, error => {
         alert("Error saving team: " + error.message);
       });
     }
   }
-
   viewTeams() {
     this.dataService.getTeams(this.userId).subscribe(teams => {
       this.teams = teams;
+      if (this.teams.length > 0) {
+        // Automatically select the first team
+        this.selectTeam(this.teams[0].id);
+      }
     }, error => {
-      alert("Error fetching teams: " + error.message);
+      this.toastr.error("Error fetching teams: " + error.message);
     });
+  }
+
+  selectTeam(teamId: number) {
+    this.selectedTeam = this.teams.find(team => team.id === teamId);
+    this.selectedDataSource.data = this.selectedTeam?.riders || [];
+    this.calculateTotalPrice(); // Recalculate total price based on selected team
   }
 
   onTeamChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     const teamId = selectElement.value;
-    this.selectedTeam = this.teams.find(team => team.id === parseInt(teamId, 10));
+    this.selectTeam(parseInt(teamId, 10));
   }
+
+
   editTeam(team: any) {
     const newTeamName = prompt("Enter new team name:", team.name);
     const newYear = prompt("Enter new year:", team.year);
