@@ -26,9 +26,9 @@ export class DataComponent implements OnInit {
   userId = 0; 
   teams: any[] = []; // Store user's teams
   selectedTeam: any; // Store selected team
-  toastr: any;
+  
   constructor(private dataService: DataService,
-     private cdr: ChangeDetectorRef,
+     private cdr: ChangeDetectorRef
      ) { }
 
   ngOnInit() {
@@ -61,19 +61,15 @@ export class DataComponent implements OnInit {
 
   toggleRowSelection(row: any) {
     if (!this.selection.isSelected(row) && this.selection.selected.length >= 24) {
-      // this.toastr.error(
-      //   "Du kan kun vælge 24 ryttere."
-      // );
-
-       alert("Du kan kun vælge 24 ryttere.");
+      
+      alert("Du kan kun vælge 24 ryttere.");
       return; // Exit if limit is reached
     }
     const rowPrice = Number(row.Price);
     const newTotalPrice = this.totalSelectedPrice + (this.selection.isSelected(row) ? -rowPrice : rowPrice);
 
     // Check if the new total price exceeds 50,000,000 DKK
-    if (!this.selection.isSelected(row) && newTotalPrice > 50000000) {
-      // this.toastr.error("Du kan ikke vælge denne rytter da prisen da vil overstige 50000000 DKK.");
+    if (!this.selection.isSelected(row) && newTotalPrice > 50000000) {      
       alert("Du kan ikke vælge denne rytter da prisen da vil overstige 50000000 DKK.");
       return; // Exit if limit is reached
     }
@@ -85,6 +81,7 @@ export class DataComponent implements OnInit {
     
     this.selectedDataSource.data = this.selection.selected;
     this.selectionCount = this.selection.selected.length; // Update selection count
+    console.debug('updateSelectedDataSource()', this.selection.selected);
     this.calculateTotalPrice();
     this.cdr.detectChanges();
   }
@@ -121,15 +118,30 @@ export class DataComponent implements OnInit {
         this.selectTeam(this.teams[0].id);
       }
     }, error => {
-      this.toastr.error("Error fetching teams: " + error.message);
+      alert("Error fetching teams: " + error.message);
     });
   }
 
   selectTeam(teamId: number) {
     this.selectedTeam = this.teams.find(team => team.id === teamId);
     this.selectedDataSource.data = this.selectedTeam?.riders || [];
+    this.updateSelection(); // Update selection to check selected riders in the left panel
+
     this.calculateTotalPrice(); // Recalculate total price based on selected team
   }
+
+  updateSelection() {
+    this.selection.clear(); // Clear current selection
+    const selectedRiderIds = new Set(this.selectedTeam?.riders.map((rider: any) => rider.id));
+    console.debug('updateSelection() selectedRiderIds', selectedRiderIds,this.selectedTeam);
+    this.dataSource.data.forEach(row => {
+      if (selectedRiderIds.has(row.ID)) {
+        this.selection.select(row);
+      }
+    });
+    this.updateSelectedDataSource(); // Update the selected data source
+  }
+
 
   onTeamChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;

@@ -67,10 +67,6 @@
     </select>
     <div *ngIf="selectedTeam">
       <h3>{{ selectedTeam.name }}</h3>
-      <ul>
-        <li *ngFor="let rider of selectedTeam.riders">{{ rider.name }} - {{ rider.price |
-          currency:'DKK':'symbol':'1.0-0' }}</li>
-      </ul>
       <button (click)="editTeam(selectedTeam)">Rediger Team</button>
     </div>
   </div>
