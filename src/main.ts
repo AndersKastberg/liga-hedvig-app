@@ -16,6 +16,7 @@ import { DataComponent } from './app/data/data.component';
 import { LoginComponent } from './app/login/login.component';
 import { DataService } from './app/data/data.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { RegisterComponent } from './app/register/register.component';
 
 
 export function tokenGetter() {
@@ -25,6 +26,7 @@ export function tokenGetter() {
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirect to login by default
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'data', component: DataComponent, canActivate: [AuthGuard] } // Protect the data route
 ];
 
