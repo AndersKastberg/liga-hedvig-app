@@ -6,10 +6,10 @@
       <!-- Checkbox Column -->
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
-        <mat-form-field appearance="outline">
-        <mat-label>Søg på navn</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Indtast navn">
-    </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Søg på navn</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Indtast navn">
+          </mat-form-field>
         </th>
         <td mat-cell *matCellDef="let element">
           <mat-checkbox (change)="$event ? toggleRowSelection(element) : null"
@@ -38,7 +38,7 @@
   </div>
 
   <div class="right-panel">
-    <h2>Valgte ryttere</h2>
+    <h2>Valgte ryttere {{ selectedTeam.name }}</h2>
     <table mat-table [dataSource]="selectedDataSource" class="mat-elevation-z8">
       <!-- Name Column -->
       <ng-container matColumnDef="name">
@@ -58,9 +58,6 @@
     </table>
     <h3>Valgte ryttere: {{ selectionCount }} / 24</h3>
     <h3>Total Price: {{ totalSelectedPrice | currency:'DKK':'symbol':'1.0-0' }}</h3>
-    <button (click)="addTeam()">Tilføj Team</button>
-    <button (click)="saveTeam(selectedTeam.name ,2025)">Gem Team</button>
-    <button (click)="viewTeams()">Se Teams</button>
   </div>
 
   <!-- Section for Viewing and Editing Teams -->
@@ -71,7 +68,13 @@
     </select>
     <div *ngIf="selectedTeam">
       <h3>{{ selectedTeam.name }}</h3>
+      <button (click)="saveTeam(selectedTeam.name ,2025)">Gem Team</button>
+      <br>
       <button (click)="editTeam(selectedTeam)">Rediger Team</button>
+      <br>
+      <button (click)="addTeam()">Tilføj Team</button>
+      
+     
     </div>
   </div>
 </div>

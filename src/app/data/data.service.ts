@@ -27,5 +27,8 @@ export class DataService {
     const riderIds = riders.map(rider => ({ id: rider.ID }));
     return this.http.put(`${this.teamUrl}/${teamId}`, { teamName, year, riders: riderIds });
   }
+  getTeamById(teamId: number): Observable<any> {
+    return this.http.get<any>(`${this.teamUrl}/teams/${teamId}`);
+  }
   
 }

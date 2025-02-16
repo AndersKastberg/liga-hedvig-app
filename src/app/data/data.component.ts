@@ -42,7 +42,7 @@ export class DataComponent implements OnInit {
         });
         this.viewTeams(); // Fetch teams when the component loads
       });
-    console.debug('Teams', this.teams);
+    // console.debug('Teams', this.teams);
   }
 
   getUserId(): Promise<number> {
@@ -83,7 +83,7 @@ export class DataComponent implements OnInit {
     
     this.selectedDataSource.data = this.selection.selected;
     this.selectionCount = this.selection.selected.length; // Update selection count
-    console.debug('updateSelectedDataSource()', this.selection.selected);
+    // console.debug('updateSelectedDataSource()', this.selection.selected);
     this.sortSelectedData(); // Sort selected data by price descending
     this.calculateTotalPrice();
     this.cdr.detectChanges();
@@ -101,6 +101,10 @@ export class DataComponent implements OnInit {
   }
 
   addTeam() {
+    if (this.teams.length >= 5) {
+      alert("Du kan kun oprette 5 teams.");
+      return;
+    }
     const teamName = prompt("Enter team name:");
     const year =2025;
     if (teamName && year) {
@@ -109,7 +113,10 @@ export class DataComponent implements OnInit {
   }
   
   saveTeam(teamName: string,year:number) {
-       
+    if (this.teams.length >= 5) {
+      alert("Du kan kun oprette 5 teams.");
+      return;
+    }
     if (teamName) {
       this.dataService.saveTeam(this.userId, teamName, year, this.selection.selected).subscribe(response => {
         alert("Team saved successfully!");
@@ -130,8 +137,26 @@ export class DataComponent implements OnInit {
     });
   }
 
+  // selectTeam(teamId: number) {
+  //   this.dataService.getTeamById(teamId).subscribe(team => {
+  //     this.selectedTeam = team;
+  //     this.selectedDataSource.data = this.selectedTeam?.riders || [];
+  //     this.updateSelection(); // Update selection to check selected riders in the left panel
+  //     this.calculateTotalPrice(); // Recalculate total price based on selected team
+  //     this.sortSelectedData(); // Sort selected data by price descending
+  //   }, error => {
+  //     alert("Error fetching team: " + error.message);
+  //   });
+  // }
+
+
   selectTeam(teamId: number) {
+    this.dataService.getTeamById(teamId).subscribe(team => {
+      console.debug('selectTeam()', team);
+    });
+
     this.selectedTeam = this.teams.find(team => team.id === teamId);
+    console.debug('selectTeam - this.selectedTeam', this.selectedTeam);
     this.selectedDataSource.data = this.selectedTeam?.riders || [];
     this.updateSelection(); // Update selection to check selected riders in the left panel
     this.sortSelectedData();
@@ -141,7 +166,7 @@ export class DataComponent implements OnInit {
   updateSelection() {
     this.selection.clear(); // Clear current selection
     const selectedRiderIds = new Set(this.selectedTeam?.riders.map((rider: any) => rider.id));
-    console.debug('updateSelection() selectedRiderIds', selectedRiderIds,this.selectedTeam);
+    // console.debug('updateSelection() selectedRiderIds', selectedRiderIds,this.selectedTeam);
     this.dataSource.data.forEach(row => {
       if (selectedRiderIds.has(row.ID)) {
         this.selection.select(row);

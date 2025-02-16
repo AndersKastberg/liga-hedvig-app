@@ -1,4 +1,5 @@
 const express = require('express');
+const app=express();
 const router = express.Router();
 const connection = require('../db');
 
@@ -146,5 +147,37 @@ router.put('/:teamId', (req, res) => {
     });
   });
 });
+
+router.get('/teams/:teamId', (req, res) => {
+  const teamId = parseInt(req.params.teamId, 10);
+  const teamQuery = `
+    SELECT t.id AS teamId, t.name AS teamName, t.year, r.ID AS riderId, r.Name AS riderName, r.Price AS riderPrice
+    FROM teams t
+    LEFT OUTER JOIN teamriders tr ON t.id = tr.team_id
+    LEFT OUTER JOIN prices_2025 r ON tr.rider_id = r.ID
+    WHERE tr.team_id = ?
+  `;
+  
+  connection.query(teamQuery, [teamId], (error, results) => {
+    if (error) {
+      res.status(500).json({ message: 'Error fetching team', error });
+    }   
+    const teams = results.reduce((acc, row) => {
+      const team = acc.find(t => t.id === row.teamId);
+      const rider = { id: row.riderId, name: row.riderName, price: row.riderPrice };
+      
+      if (team) {
+        team.riders.push(rider);
+      } else {
+        acc.push({ id: row.teamId, name: row.teamName, year: row.year, riders: [rider] });
+      }
+      
+      return acc;
+    }, []);
+
+    res.status(200).json(teams);
+  });
+});
+
 
 module.exports = router;
