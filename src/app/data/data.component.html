@@ -66,13 +66,14 @@
     <select (change)="onTeamChange($event)">
       <option *ngFor="let team of teams" [value]="team.id">{{ team.name }}</option>
     </select>
+    <button (click)="addTeam()">Tilføj Team</button>
     <div *ngIf="selectedTeam">
       <h3>{{ selectedTeam.name }}</h3>
       <button (click)="saveTeam(selectedTeam.name ,2025)">Gem Team</button>
       <br>
       <button (click)="editTeam(selectedTeam)">Rediger Team</button>
       <br>
-      <button (click)="addTeam()">Tilføj Team</button>
+      
       
      
     </div>

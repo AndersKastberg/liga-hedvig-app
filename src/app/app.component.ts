@@ -9,5 +9,5 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'liga-hedvig-app';
+  title = 'Liga Hedvig 2025';
 }

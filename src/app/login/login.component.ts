@@ -24,7 +24,7 @@ export class LoginComponent {
     this.http.post<{ token: string }>('http://localhost:3000/login', { username: this.username, password: this.password })
       .subscribe(response => {
         localStorage.setItem('token', response.token);
-        this.router.navigate(['/']);
+        this.router.navigate(['/data']);
       }, error => {
         alert('Login failed');
       });

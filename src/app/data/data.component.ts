@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DataService } from './data.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -8,6 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { decodeToken } from '../../utils/jwt.utils';
 
 
 @Component({
@@ -25,45 +26,38 @@ export class DataComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
   totalSelectedPrice = 0;
   selectionCount = 0;
-  userId = 0; 
+  userId = 0;
   teams: any[] = []; // Store user's teams
   selectedTeam: any; // Store selected team
-  
+
   constructor(private dataService: DataService,
-     private cdr: ChangeDetectorRef
-     ) { }
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
-      // Simulate fetching user ID from a service or auth context
-      this.getUserId().then(userId => {
-        this.userId = userId;
-        this.dataService.getData().subscribe(data => {
-          this.dataSource.data = data;
-        });
-        this.viewTeams(); // Fetch teams when the component loads
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = decodeToken(token);
+      this.userId = decodedToken.id; // Adjust this based on your token structure
+      console.debug('this.userId', this.userId);
+
+      this.dataService.getData().subscribe(data => {
+        this.dataSource.data = data;
       });
-    // console.debug('Teams', this.teams);
+      this.viewTeams(); // Fetch teams when the component loads
+    } else {
+      console.error('User is not logged in');
+    }
   }
 
-  getUserId(): Promise<number> {
-    // Simulate an asynchronous operation to fetch user ID
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(1); // Replace with actual logic to fetch user ID
-      }, 100);
-    });
-  }
-  
   isAnySelected() {
     const numSelected = this.selection.selected.length;
     return numSelected > 0 && numSelected < this.dataSource.data.length;
   }
 
-  
-
   toggleRowSelection(row: any) {
     if (!this.selection.isSelected(row) && this.selection.selected.length >= 24) {
-      
+
       alert("Du kan kun vælge 24 ryttere.");
       return; // Exit if limit is reached
     }
@@ -71,7 +65,7 @@ export class DataComponent implements OnInit {
     const newTotalPrice = this.totalSelectedPrice + (this.selection.isSelected(row) ? -rowPrice : rowPrice);
 
     // Check if the new total price exceeds 50,000,000 DKK
-    if (!this.selection.isSelected(row) && newTotalPrice > 50000000) {      
+    if (!this.selection.isSelected(row) && newTotalPrice > 50000000) {
       alert("Du kan ikke vælge denne rytter da prisen da vil overstige 50000000 DKK.");
       return; // Exit if limit is reached
     }
@@ -80,7 +74,7 @@ export class DataComponent implements OnInit {
   }
 
   updateSelectedDataSource() {
-    
+
     this.selectedDataSource.data = this.selection.selected;
     this.selectionCount = this.selection.selected.length; // Update selection count
     // console.debug('updateSelectedDataSource()', this.selection.selected);
@@ -106,31 +100,41 @@ export class DataComponent implements OnInit {
       return;
     }
     const teamName = prompt("Enter team name:");
-    const year =2025;
+    const year = 2025;
     if (teamName && year) {
       this.saveTeam(teamName, year);
     }
   }
-  
-  saveTeam(teamName: string,year:number) {
+
+  saveTeam(teamName: string, year: number) {
+
     if (this.teams.length >= 5) {
       alert("Du kan kun oprette 5 teams.");
       return;
     }
     if (teamName) {
-      this.dataService.saveTeam(this.userId, teamName, year, this.selection.selected).subscribe(response => {
-        alert("Team saved successfully!");
-      }, error => {
-        alert("Error saving team: " + error.message);
-      });
+      const currentSelectedTeamId = this.selectedTeam ? this.selectedTeam.id : null;
+
+      if (teamName) {
+        this.dataService.saveTeam(this.userId, teamName, year, this.selection.selected).subscribe(response => {
+          alert("Team saved successfully!");
+          this.viewTeams(currentSelectedTeamId); // Fetch teams after saving a new team
+        }, error => {
+          alert("Error saving team: " + error.message);
+        });
+      }
     }
   }
-  viewTeams() {
+  viewTeams(currentSelectedTeamId?: number) {
     this.dataService.getTeams(this.userId).subscribe(teams => {
       this.teams = teams;
       if (this.teams.length > 0) {
-        // Automatically select the first team
-        this.selectTeam(this.teams[0].id);
+
+        if (currentSelectedTeamId) {
+          this.selectTeam(currentSelectedTeamId); // Keep the current team selected
+        } else {
+          this.selectTeam(this.teams[0].id); // Select the first team if no current selection
+        }
       }
     }, error => {
       alert("Error fetching teams: " + error.message);
