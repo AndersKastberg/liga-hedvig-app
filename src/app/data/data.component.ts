@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { decodeToken } from '../../utils/jwt.utils';
 
 
@@ -31,7 +31,7 @@ export class DataComponent implements OnInit {
   selectedTeam: any; // Store selected team
 
   constructor(private dataService: DataService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,private toastr: ToastrService
   ) { }
 
   ngOnInit() {
@@ -58,7 +58,7 @@ export class DataComponent implements OnInit {
   toggleRowSelection(row: any) {
     if (!this.selection.isSelected(row) && this.selection.selected.length >= 24) {
 
-      alert("Du kan kun vælge 24 ryttere.");
+      this.toastr.error("Du kan kun vælge 24 ryttere.");
       return; // Exit if limit is reached
     }
     const rowPrice = Number(row.Price);
@@ -66,7 +66,7 @@ export class DataComponent implements OnInit {
 
     // Check if the new total price exceeds 50,000,000 DKK
     if (!this.selection.isSelected(row) && newTotalPrice > 50000000) {
-      alert("Du kan ikke vælge denne rytter da prisen da vil overstige 50000000 DKK.");
+      this.toastr.error("Du kan ikke vælge denne rytter da prisen da vil overstige 50000000 DKK.");
       return; // Exit if limit is reached
     }
     this.selection.toggle(row);
@@ -96,7 +96,7 @@ export class DataComponent implements OnInit {
 
   addTeam() {
     if (this.teams.length >= 5) {
-      alert("Du kan kun oprette 5 teams.");
+      this.toastr.error("Du kan kun oprette 5 teams.");
       return;
     }
     const teamName = prompt("Enter team name:");
@@ -109,7 +109,7 @@ export class DataComponent implements OnInit {
   saveTeam(teamName: string, year: number) {
 
     if (this.teams.length >= 5) {
-      alert("Du kan kun oprette 5 teams.");
+      this.toastr.error("Du kan kun oprette 5 teams.");
       return;
     }
     if (teamName) {
@@ -117,10 +117,10 @@ export class DataComponent implements OnInit {
 
       if (teamName) {
         this.dataService.saveTeam(this.userId, teamName, year, this.selection.selected).subscribe(response => {
-          alert("Team saved successfully!");
+          this.toastr.success("Team saved successfully!");
           this.viewTeams(currentSelectedTeamId); // Fetch teams after saving a new team
         }, error => {
-          alert("Error saving team: " + error.message);
+          this.toastr.error("Error saving team: " + error.message);
         });
       }
     }
@@ -137,22 +137,11 @@ export class DataComponent implements OnInit {
         }
       }
     }, error => {
-      alert("Error fetching teams: " + error.message);
+      this.toastr.error("Error fetching teams: " + error.message);
     });
   }
 
-  // selectTeam(teamId: number) {
-  //   this.dataService.getTeamById(teamId).subscribe(team => {
-  //     this.selectedTeam = team;
-  //     this.selectedDataSource.data = this.selectedTeam?.riders || [];
-  //     this.updateSelection(); // Update selection to check selected riders in the left panel
-  //     this.calculateTotalPrice(); // Recalculate total price based on selected team
-  //     this.sortSelectedData(); // Sort selected data by price descending
-  //   }, error => {
-  //     alert("Error fetching team: " + error.message);
-  //   });
-  // }
-
+  
 
   selectTeam(teamId: number) {
     this.dataService.getTeamById(teamId).subscribe(team => {
@@ -195,9 +184,9 @@ export class DataComponent implements OnInit {
     const newYear = 2025;
     if (newTeamName && newYear) {
       this.dataService.editTeam(team.id, newTeamName, Number(newYear), team.riders).subscribe(response => {
-        alert("Team edited successfully!");
+        this.toastr.success("Team edited successfully!");
       }, error => {
-        alert("Error editing team: " + error.message);
+        this.toastr.error("Error editing team: " + error.message);
       });
     }
   }

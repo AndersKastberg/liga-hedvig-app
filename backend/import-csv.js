@@ -2,12 +2,17 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const mysql = require('mysql');
 
+const ca = fs.readFileSync('cert/DigiCertGlobalRootCA.crt.pem');
+
 // MySQL connection setup
 const connection = mysql.createConnection({
-    host: 'localhost',
+    host: 'ligahedvig.mysql.database.azure.com',
     user: 'sysadmin',
-    password: 'c@n0n94554248',
-    database: 'ligahedvig'
+    password: '8tdB5.XJd!!geJs',
+    database: 'ligahedvig',
+    ssl: {
+        ca: ca
+    } 
 });
 
 connection.connect((err) => {

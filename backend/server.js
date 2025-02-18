@@ -7,14 +7,16 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { expressjwt: expressJwt } = require('express-jwt');
 const teamRouter = require('./routes/team');
-
+const ca = fs.readFileSync('cert/DigiCertGlobalRootCA.crt.pem');
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'sysadmin',
-    password: 'c@n0n94554248',
-    database: 'ligahedvig'
-});
+  host: 'ligahedvig.mysql.database.azure.com',
+  user: 'sysadmin',
+  password: '8tdB5.XJd!!geJs',
+  database: 'ligahedvig',
+  ssl: {
+      ca: ca
+  } });
 app.use(bodyParser.json());
 app.use(cors());
 
