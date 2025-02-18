@@ -55,7 +55,7 @@
       <tr mat-row *matRowDef="let row; columns: selectedDisplayedColumns;"></tr>
     </table>
     <h3>Valgte ryttere: {{ selectionCount }} / 24</h3>
-    <h3>Total Price: {{ totalSelectedPrice | currency:'DKK':'symbol':'1.0-0' }}</h3>
+    <h3>Samlet pris: {{ totalSelectedPrice | currency:'DKK':'symbol':'1.0-0' }}</h3>
   </div>
 
   <div class="panel teams-section">
