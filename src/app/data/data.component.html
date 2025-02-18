@@ -1,15 +1,15 @@
 <div class="container">
-  <div class="left-panel">
+  <div class="panel left-panel">
     <h2>Ryttere</h2>
-
+    <mat-form-field appearance="outline">
+      <mat-label>Søg på navn</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Indtast navn">
+    </mat-form-field>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
       <!-- Checkbox Column -->
       <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-form-field appearance="outline">
-            <mat-label>Søg på navn</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Indtast navn">
-          </mat-form-field>
+        <th mat-header-cell *matHeaderCellDef> 
+          <mat-checkbox></mat-checkbox> 
         </th>
         <td mat-cell *matCellDef="let element">
           <mat-checkbox (change)="$event ? toggleRowSelection(element) : null"
@@ -33,12 +33,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-
-
   </div>
 
-  <div class="right-panel">
-    <h2>Valgte ryttere </h2>
+  <div class="panel right-panel">
+    <h2>Valgte ryttere {{selectedTeam.name}}</h2><br><br><br><br>
     <table mat-table [dataSource]="selectedDataSource" class="mat-elevation-z8">
       <!-- Name Column -->
       <ng-container matColumnDef="name">
@@ -60,22 +58,23 @@
     <h3>Total Price: {{ totalSelectedPrice | currency:'DKK':'symbol':'1.0-0' }}</h3>
   </div>
 
-  <!-- Section for Viewing and Editing Teams -->
-  <div class="teams-section">
+  <div class="panel teams-section">
     <h2>Dine Teams</h2>
     <select (change)="onTeamChange($event)">
       <option *ngFor="let team of teams" [value]="team.id">{{ team.name }}</option>
     </select>
-    <button (click)="addTeam()">Tilføj Team</button>
+    
     <div *ngIf="selectedTeam">
-      <h3>{{ selectedTeam.name }}</h3>
-      <button (click)="saveTeam(selectedTeam.name ,2025)">Gem Team</button>
+      <!-- <h3>{{ selectedTeam.name }}</h3> -->
       <br>
-      <button (click)="editTeam(selectedTeam)">Rediger Team</button>
+      <button (click)="saveTeam(selectedTeam.name, 2025)">Gem Team</button>
       <br>
-      
-      
-     
+      <button (click)="editTeam(selectedTeam)">Rediger Team navn</button>
+      <br><br>
     </div>
+    <button (click)="addTeam()">Tilføj Team</button>
+    <br><br>
+    <a routerLink="/change-password">Skift Password</a>
   </div>
+  
 </div>

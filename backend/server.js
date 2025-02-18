@@ -71,6 +71,35 @@ app.post('/register', async (req, res) => {
     });
   });
   
+// Change password endpoint
+app.post('/change-password', async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.body.userId; // Assuming user ID is stored in request object
+  
+    // Fetch the user from the database
+    db.query('SELECT password FROM users WHERE id = ?', [userId], async (error, results) => {
+      if (error) {
+        return res.status(500).json({ message: 'Error fetching user data', error });
+      }
+  
+      const user = results[0];
+      const match = await bcrypt.compare(currentPassword, user.password);
+  
+      if (!match) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+  
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId], (error, results) => {
+        if (error) {
+          return res.status(500).json({ message: 'Error updating password', error });
+        }
+        res.status(200).json({ message: 'Password changed successfully' });
+      });
+    });
+  });
+  
+
 
 db.connect((err) => {
     if (err) {

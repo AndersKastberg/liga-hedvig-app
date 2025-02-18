@@ -15,6 +15,7 @@ import { DataComponent } from './data/data.component';
 import { DataService } from './data/data.service';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component'
+import { ChangePasswordComponent } from './change-password/change-password.component'
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -24,20 +25,24 @@ const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirect to login by default
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'change-password', component: ChangePasswordComponent },
+
   { path: 'data', component: DataComponent, canActivate: [AuthGuard] } // Protect the data route
 ];
 
 @NgModule({
-  
+
   imports: [
+    RouterModule.forRoot(routes),
     BrowserModule,
+    ChangePasswordComponent,
+    DataComponent,
     FormsModule,
     LoginComponent,
     RegisterComponent,
     BrowserAnimationsModule,
     MatTableModule,
     HttpClientModule,
-    RouterModule.forRoot(routes),
     MatCheckboxModule,
     ToastrModule.forRoot(),
     JwtModule.forRoot({
@@ -47,16 +52,16 @@ const routes: Routes = [
         disallowedRoutes: ['http://localhost:3000/login', 'http://localhost:3000/register']
       }
     }),
-    
+
     AppComponent,
     LoginComponent,
     RegisterComponent
   ],
-  providers: [ 
+  providers: [
     DataService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     AuthGuard
   ],
-  
+
 })
 export class AppModule { }

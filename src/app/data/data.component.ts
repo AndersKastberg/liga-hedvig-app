@@ -192,7 +192,7 @@ export class DataComponent implements OnInit {
 
   editTeam(team: any) {
     const newTeamName = prompt("Enter new team name:", team.name);
-    const newYear = prompt("Enter new year:", team.year);
+    const newYear = 2025;
     if (newTeamName && newYear) {
       this.dataService.editTeam(team.id, newTeamName, Number(newYear), team.riders).subscribe(response => {
         alert("Team edited successfully!");

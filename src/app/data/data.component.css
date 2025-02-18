@@ -5,7 +5,64 @@
   
   .left-panel {
     width: 48%;
-    overflow-y: auto; /* Allow scrolling for the left panel */
+    overflow-y: auto; /* Allow scrolling for the left panel */.container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start; /* Align items at the top */
+    }
+    
+    .panel {
+      width: 48%; /* Use the same width for both panels */
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      height: 100vh; /* Full viewport height */
+    }
+    
+    h2, h3 {
+      color: #333;
+    }
+    
+    .mat-form-field {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    
+    .mat-form-field-label {
+      font-size: 1.2em;
+      color: black;
+      font-weight: bold;
+    }
+    
+    table {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    
+    button:hover {
+      background-color: #0056b3;
+    }
+    
+    select {
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    
     height: 100vh; /* Full viewport height */
   }
   
@@ -21,8 +78,7 @@
     color: black; /* Change color to black or any other color for better visibility */
     font-weight: bold; /* Make the label bold */
   }
-  
-  
+    
   table {
     width: 100%;
   }

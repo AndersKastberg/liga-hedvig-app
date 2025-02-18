@@ -19,7 +19,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Debug Backend",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/backend/server.js" // Path to your main server file
     }
