@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { decodeToken } from '../../utils/jwt.utils';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-change-password',
@@ -33,7 +34,7 @@ export class ChangePasswordComponent {
       return;
     }
 
-    this.http.post('http://localhost:3000/change-password', {
+    this.http.post(environment.apiUrl+'change-password', {
       userId: this.userId,
       currentPassword: this.currentPassword,
       newPassword: this.newPassword

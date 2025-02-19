@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  private apiUrl = 'http://localhost:3000/data';
-  private teamUrl = 'http://localhost:3000/api/team';
+  private apiUrl = environment.apiUrl+'data';
+  private teamUrl = environment.apiUrl+'api/team';
   constructor(private http: HttpClient) {}
 
   getData(): Observable<any> {

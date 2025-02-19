@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../environments/environment';
+
 
 @Component({
     selector: 'app-register',
@@ -20,7 +22,7 @@ export class RegisterComponent {
     constructor(private http: HttpClient, private router: Router,private toastr: ToastrService) { }
 
     register() {
-        this.http.post('http://localhost:3000/register', { name: this.name, username: this.username, password: this.password }) // Include name
+        this.http.post(environment.apiUrl+'register', { name: this.name, username: this.username, password: this.password }) // Include name
           .subscribe(response => {
             this.toastr.success('Registration successful! You can now log in.');
             this.router.navigate(['/login']);

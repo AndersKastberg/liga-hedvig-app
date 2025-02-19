@@ -16,6 +16,7 @@ import { DataService } from './data/data.service';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component'
 import { ChangePasswordComponent } from './change-password/change-password.component'
+import { environment } from '../environments/environment';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -56,8 +57,8 @@ const routes: Routes = [
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:3000'],
-        disallowedRoutes: ['http://localhost:3000/login', 'http://localhost:3000/register']
+        allowedDomains: environment.allowedDomains,
+        disallowedRoutes: environment.disallowedRoutes
       }
     }),
 

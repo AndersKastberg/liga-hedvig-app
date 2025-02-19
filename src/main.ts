@@ -18,6 +18,7 @@ import { DataService } from './app/data/data.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RegisterComponent } from './app/register/register.component';
 import { ChangePasswordComponent } from './app/change-password/change-password.component'
+import { environment } from './environments/environment';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -38,8 +39,8 @@ bootstrapApplication(AppComponent, {
       ToastrModule.forRoot(), JwtModule.forRoot({
         config: {
           tokenGetter: tokenGetter,
-          allowedDomains: ['localhost:3000'],
-          disallowedRoutes: ['http://localhost:3000/login', 'http://localhost:3000/register']
+          allowedDomains: environment.allowedDomains,
+          disallowedRoutes: environment.disallowedRoutes
         }
       })),
     DataService,
