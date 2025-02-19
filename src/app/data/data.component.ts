@@ -108,10 +108,10 @@ export class DataComponent implements OnInit {
 
   saveTeam(teamName: string, year: number) {
 
-    if (this.teams.length >= 5) {
-      this.toastr.error("Du kan kun oprette 5 teams.");
-      return;
-    }
+    // if (this.teams.length >= 5) {
+    //   this.toastr.error("Du kan kun oprette 5 teams.");
+    //   return;
+    // }
     if (teamName) {
       const currentSelectedTeamId = this.selectedTeam ? this.selectedTeam.id : null;
 
