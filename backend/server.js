@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 const { expressjwt: expressJwt } = require('express-jwt');
 const teamRouter = require('./routes/team');
 const ca = fs.readFileSync('cert/DigiCertGlobalRootCA.crt.pem');
+const path = require('path');
 
 const db = mysql.createConnection({
   host: 'ligahedvig.mysql.database.azure.com',
@@ -18,8 +19,15 @@ const db = mysql.createConnection({
   ssl: {
       ca: ca
   } });
+
+
+
 app.use(bodyParser.json());
 app.use(cors());
+
+
+// Serve Static Files from the Public Folder
+app.use(express.static(path.join(__dirname, 'public/liga-hedvig-app/browser')));
 
 app.use('/api/team', teamRouter);
 
@@ -117,6 +125,11 @@ app.get('/data', (req, res) => {
         if (err) throw err;
         res.send(results);
     });
+});
+
+// Handle All Other Routes and Serve the Angular App
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/liga-hedvig-app/browser/index.html'));
 });
 
 // Error handling middleware
