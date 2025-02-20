@@ -47,11 +47,4 @@ backend/node_modules/@babel/
 backend/node_modules/*/
 node_modules/*
 backend/node_modules/.bin/acorn
-backend/public/liga-hedvig-app/prerendered-routes.json
-backend/public/liga-hedvig-app/3rdpartylicenses.txt
-backend/public/liga-hedvig-app/browser/favicon.ico
-backend/public/liga-hedvig-app/browser/index.html
 .gitignore
-backend/public/liga-hedvig-app/browser/polyfills-FFHMD2TL.js
-backend/public/liga-hedvig-app/browser/styles-LN74G6S3.css
-backend/public/liga-hedvig-app/browser/main-QRINAN2S.js
